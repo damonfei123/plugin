@@ -1,0 +1,17 @@
+/*dlg css*/
+.dlg { position: absolute; _position:absolute; top: 0; left: 0; width:497px; color:#666; padding-top: 0; }
+.dlg h3 { float: left; font-size: 16px; color: #666666; font-weight: bold; margin: 0; margin-left: 20px; _margin-left: 130px; }
+.dlg .dlg-header-bg { height: 13px; position: relative; top: 3px; background-color: #EEE; border-top-left-radius: 10px; border-top-right-radius: 10px;  }
+.dlg .dlg-header { zoom: 1; overflow: hidden; background-color: #EEEEEE; padding-right: 10px; }
+.dlg .dlg-header .close { float: right; background-image: url("../img/css-spirits-24.png"); _background-image: url("../img/css-spirits-8.png"); background-position: 0px -50px; display: inline-block; width: 29px; height: 28px;}
+.dlg .dlg-body {  clear: both; background-color: #FFF; padding: 10px; font-size: 16px; }
+.dlg .dlg-head .close { position:absolute; top:12px; right:10px; display:block; width:19px; height:19px; line-height:0; font-size:0; background-position:0 bottom; text-indent:-9999px; overflow:hidden; outline:none; }
+.dlg .dlg-tail-body { background-color: #FFF; text-align: center; padding-bottom: 10px; }
+.dlg .dlg-tail-body .dlg-confirm,.dlg .dlg-tail-body .dlg-cancel { height: 30px;line-height: 30px; padding: 0 36px; margin: auto 10px; text-align: center;  border: 1px solid #CCC; display: inline-block; border-radius:5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; cursor: pointer; }
+.dlg .dlg-tail-body .dlg-confirm:hover,.dlg .dlg-tail-body .dlg-cancel:hover { background-color: #EBEBEB; }
+.dlg .dlg-tail { height: 20px;position: relative; top: -3px; background-color: #FFF; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+.shade { position: fixed; _position: absolute; }
+
+/*tips*/
+.tipArrow-down { background: url('../img/tipdown.png') top center no-repeat; height: 9px;}
+.tipArrow-up { background: url('../img/tipup.png') top center no-repeat; _background: url('../img/up-8.png') top center no-repeat; height: 10px;}
