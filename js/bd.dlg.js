@@ -1,48 +1,68 @@
 /*
- *  地推弹框插件
+ *  弹框插件
  *  @author damon
  *  @email  zhangyinfei@baidu.com
  *  @date 2014-09-01
  *
  */
 $.widget("bd.dtdlg",{
+//配置参数
 options :　{
+    //BASIC
     title          : '提示框',
     //框内容
     bodyHtml       : null,
-    bodyClass      : 'dlg',
-    className      : ' ',
-    //建议不要设置，如果设置，则框直接距离顶部距离而非居中
-    top            : null,
-    z_index        : 300,
+    //btn文案
+    confirmTxt     : '确定',
+    confirming     : '操作中，请稍后...',
+    cancelTxt      : '取消',
+    //内容文字对方方式:left,center,right
+    msgAlign       : null,
+    draggable      : false,
+    //dlg框的样式设置,可以设置宽高等
+    style          : {},
+    //确定和取消方向,默认先确定后取消
+    confirmCancel  : true,
+    //出现和退出时普通show(),hide()动画样式的时间
     showHideTime   : 0,
+
     //显示是否要滑动动画
     animate        : null,
+    //如果有滑动动画，是否要弹跳
+    isBound        : true,
     //0原来的方向,1原地隐藏，2：反方向
     closeDirect    : 2,
     animateTop     : 1000,
     animateTime    : 300,
-    //滑动动画参数END
+
+    //建议不要设置，如果设置，则框直接距离顶部距离而非居中
+    top            : null,
+    //接口函数
+    openHandler    : [],
+    openAfterHandler: [],
+    successHandler : [],
+    closeHandler   : [],
+    /************END**************/
+
+    /***********默认参数，非必要不需要修改**********/
+    bodyClass      : 'dlg',
+    className      : ' ',
+    z_index        : 300,
     dlgbodyClass   : 'dlg-body',
-    msgAlign       : null,//left,center,right
     confirmClass   : 'dlg-confirm',
     cancelClass    : 'dlg-cancel',
-    draggable      : false,
-    confirmTxt     : '确定',
-    confirming     : '操作中，请稍后...',
-    cancelTxt      : '取消',
     closeClass     : "close",
     shadeClass     : "shade",
     tail           : true,
-    openHandler    : [],
-    successHandler : [],
-    confirmCancel  : true,//确定和取消方向
     headerClass    : 'dlg-header',
     headerBgClass  : 'dlg-header-bg',
-    style          : {},//dlg框的样式设置
     tailContainerClass : 'dlg-tail-body',
-    listenEnter    : true//是否绑定ENTER健关闭窗口
+
+    animateJianJu  : 20,
+    //是否绑定ENTER健关闭窗口
+    listenEnter    : true
 },
+//internel
 ele        : null,
 shade      : null,
 allEle     : null,
@@ -88,19 +108,50 @@ _show:function(){
     new_dlg.css(this.options.style);
     var left_top = this._getCenterXY(new_dlg.width(),new_dlg.height());
 
+    var jianju = this.options.animateJianJu,
+        time   = this.options.animateTime;
+        ele    = this.ele;
+        isBound= this.options.isBound;
     if (this.options.animate == 'top') {
+
+        left_top['opacity'] = 1;
+        $(ele).css({'display':'block','opacity':0});
         left_top['top'] += this.options.animateTop;
-        $(this.ele).css({'display':'block','opacity':0});
+        if (isBound) {
+            left_top['top'] += jianju;
+            //连环动画效果
+            $(this.ele).animate(left_top,time,'swing',function(){
+                left_top['top'] -= 2*jianju;
+                $(ele).animate(left_top,time/3,'swing',function(){
+                    left_top['top'] += jianju;
+                    $(ele).animate(left_top,time/3);
+                });
+            });
+        }else{
+            $(this.ele).animate(left_top,time);
+        };
 
-        left_top['opacity'] = 1;
-        $(this.ele).animate(left_top,this.options.animateTime);
         this.shade.removeClass("none").show(this.options.showHideTime);
+
     }else if(this.options.animate == 'left'){
-        left_top['left'] += this.options.animateTop;
+        left_top['opacity'] = 1;
         $(this.ele).css({'display':'block','opacity':0});
 
-        left_top['opacity'] = 1;
-        $(this.ele).animate(left_top,this.options.animateTime);
+        left_top['left'] += this.options.animateTop;
+        if (isBound) {
+            left_top['left'] += jianju;
+            //连环动画效果
+            $(this.ele).animate(left_top,time,'swing',function(){
+                left_top['left'] -= 2*jianju;
+                $(ele).animate(left_top,time/3,'swing',function(){
+                    left_top['left'] += jianju;
+                    $(ele).animate(left_top,time/3);
+                });
+            });
+        }else{
+            $(this.ele).animate(left_top,this.options.animateTime);
+        };
+
         this.shade.removeClass("none").show(this.options.showHideTime);
     }else{
         this.allEle.removeClass('none').show(this.options.showHideTime);
@@ -128,32 +179,38 @@ enable: function(){
 close: function (all){
     var _this = this.element;
     var $ret = true;
-    if(typeof(this.options.closeHandler) === 'function')
+    if(typeof(this.options.closeHandler) === 'function'){
        $ret = this.options.closeHandler(this.element);
-    if ($ret === 'step') {
-       $obj = $('#'+$(_this).attr('id'));
-    }else{
-       $obj = this.ele;
-    };
+    }
+    $obj = this.ele;
 
-    var left_top = this._getCenterXY($obj.width(), $obj.height());
+    var left_top     = this._getCenterXY($obj.width(), $obj.height()),
+        ele          = this.ele,
+        closeDirect  = this.options.closeDirect,
+        animateTop   = this.options.animateTop,
+        animateTime  = this.options.animateTime,
+        showHideTime = this.options.showHideTime;
 
     if (this.options.animate == 'top') {
-        left_top['top'] += this.options.closeDirect * this.options.animateTop;
+        left_top['top'] += closeDirect * animateTop;
 
         left_top['opacity'] = 0;
-        $(this.ele).animate(left_top,this.options.animateTime);
-        this.shade.removeClass("none").hide(this.options.showHideTime);
-    }else if(this.options.animate == 'left'){
-        left_top['left'] += this.options.closeDirect * this.options.animateTop;
-
-        left_top['opacity'] = 0;
-        $(this.ele).animate(left_top,this.options.animateTime,function(){
-            $(this).remove();
+        $(ele).animate(left_top,animateTime,'swing',function(){
+            left_top['top'] -= (closeDirect+1) * animateTop;
+            $(ele).css(left_top);
         });
-        this.shade.removeClass("none").hide(this.options.showHideTime);
+        this.shade.removeClass("none").hide(showHideTime);
+    }else if(this.options.animate == 'left'){
+        left_top['left'] += closeDirect * animateTop;
+
+        left_top['opacity'] = 0;
+        $(ele).animate(left_top,animateTime,'swing',function(){
+            left_top['left'] -= (closeDirect+1) * animateTop;
+            $(ele).css(left_top);
+        });
+        this.shade.removeClass("none").hide(showHideTime);
     }else{
-        this.ele.removeClass('none').hide(this.options.showHideTime);
+        this.ele.removeClass('none').hide(showHideTime);
     };
 
     if ($ret != 'step') {
