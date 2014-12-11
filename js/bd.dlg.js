@@ -154,6 +154,7 @@ _show:function(){
 
         this.shade.removeClass("none").show(this.options.showHideTime);
     }else{
+        this._rePos();
         this.allEle.removeClass('none').show(this.options.showHideTime);
     };
 
@@ -394,8 +395,12 @@ $.extend({
     error: function(msg,title,id,openHandler,successHandler,closeHandler,option){
         if (typeof(title) == 'undefined' || title == null) title = '错误';
         if (typeof(id) == 'undefined' || id == null) id = 'Dlg_Err'+parseInt(Math.random()*100000000);
-        $div = $('<div />').attr('id',id);
-        $div.appendTo($('body'));
+        if ($('#'+id).length == 0) {
+            $div = $('<div />').attr('id',id);
+            $div.appendTo($('body'));
+        }else{
+            $div = $('#'+id);
+        };
         msg = '<font color=red>'+msg+'</font>';
         var options = $.extend({},{
             'title'         : title,
