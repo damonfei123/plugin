@@ -82,11 +82,11 @@ _ready : function (){
     var _this = this.element;
         that.ele = _this;
     var $this = $(_this);
-    that._generateShade(_this);//生成遮罩层
-    that._generateHtml(_this);//生成html弹框
     if ($this.attr('id') == undefined ) {
         $this.attr('id','bddlt_'+parseInt(Math.random()*1000000));
     };
+    that._generateShade(_this);//生成遮罩层
+    that._generateHtml(_this);//生成html弹框
     this.allEle = $("#"+_this.attr("id")).add($("."+that.options.shadeClass));//框加遮罩层
     if (that.options.draggable && typeof($.fn.draggable) != 'undefined') {
         _this.find('.'+this.options.headerClass)
